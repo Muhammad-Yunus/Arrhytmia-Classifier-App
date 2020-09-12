@@ -2,8 +2,6 @@
 from app import os
 from app import app, build_sample_db
 
-
-
 if __name__ == '__main__':
 
     # Build a sample db on the fly, if one does not exist yet.
