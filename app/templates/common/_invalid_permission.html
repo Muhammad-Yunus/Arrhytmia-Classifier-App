@@ -1,0 +1,18 @@
+<center>
+  <section class="well transp_white center_v">
+    <div class="col-sm-12">
+      <h1><i class="fa fa-exclamation-triangle"></i> Invalid Permission</h1>
+      <p class="lead">
+        You don't have permission to view required screen.
+      </p>
+      {% if not current_user.is_authenticated %}
+        <p>
+          <a class="btn btn-primary" href="{{ url_for('security.login') }}">Login</a> <a class="btn btn-default" href="{{ url_for('security.register') }}">Register</a>
+        </p>
+      {% endif %}
+      <br>
+    </div>
+  </section>
+</center>
+<br><br><br><br><br><br><br><br><br>
+<br><br><br><br><br><br><br><br><br><br>

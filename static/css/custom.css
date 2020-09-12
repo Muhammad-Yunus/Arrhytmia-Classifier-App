@@ -1,5 +1,0 @@
-input[type=checkbox], 
-input[type=radio] {
-    width: 25px !important;
-    -webkit-appearance: checkbox  !important;
-}

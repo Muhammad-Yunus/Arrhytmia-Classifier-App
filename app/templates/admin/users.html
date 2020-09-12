@@ -1,0 +1,50 @@
+{% extends 'admin/master.html' %}
+{% block body %}
+{{ super() }}
+
+{% if current_user.is_authenticated %}
+
+<!-- Content Header (Page header) -->
+<section class="content-header">
+  <h1>
+    Users 
+  </h1>
+  <ol class="breadcrumb">
+      <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+      <li class="active">Users</li>
+  </ol>
+</section>
+
+<section class="content">
+    <div class="row">
+      <div class="col-md-12">
+        <!-- Table Records Widget -->
+        {% from 'rich_widget/_table_records.html' import f_tableRecords %}
+        {% call(loop, record) f_tableRecords(headerCtrl, tableHeader, tableRecords, footerCtrl) %}
+          <!-- Create Table Content -->
+          <td>{{ loop.index + tableRecords.per_page*(tableRecords.page - 1) }}</td>
+          <td>{{ record['first_name'] }}</td>
+          <td>{{ record['last_name'] }}</td>
+          <td>{{ record['email'] }}</td>
+          <td><i class= "fa {{ 'fa-check-circle-o' if record['active'] else 'fa-close'}}" ></i></td>
+          <td>{{ record['confirmed_at'].strftime("%m/%d/%Y %H:%M:%S") }}</td>
+          <td>
+            <a href="{{ url_for(headerCtrl.detail_act, _id = record['id']) }}" class="btn btn-xs btn-primary">
+              <i class="fa fa-edit"></i>
+            </a>
+          </td>
+        {% endcall %}
+      </div>
+    </div>
+  </section>
+<!-- /.content -->
+
+{% else %}
+  {% include 'common/_invalid_permission.html' %}
+{% endif %}
+
+{% endblock body %}
+
+{% block js_custom %}
+
+{% endblock js_custom %}

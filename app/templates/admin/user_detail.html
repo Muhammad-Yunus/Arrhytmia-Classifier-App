@@ -1,0 +1,42 @@
+{% extends 'admin/master.html' %}
+{% block body %}
+{{ super() }}
+
+{% if current_user.is_authenticated %}
+
+<!-- Content Header (Page header) -->
+<section class="content-header">
+  <h1>
+    {{ form.first_name.data }}
+  </h1>
+  <ol class="breadcrumb">
+    <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+    <li class="active">Profile</li>
+  </ol>
+</section>
+
+<section class="content">
+  <div class="row">
+    <div class="col-lg-6">
+      {% from 'rich_widget/_form_widget.html' import f_form %}
+      {% from 'rich_widget/_form_field.html' import f_form_field, f_form_button %}
+
+      {% call(type, item) f_form(formCtrl, form) %}
+        
+        {% if type == 'content' and item.name in formCtrl.inputField %}
+          {{ f_form_field(item) }}
+
+        {% elif type == 'footer' and item.name in formCtrl.submitField %}
+          {{ f_form_button(item) }}
+        {% endif %}
+
+      {% endcall %}
+    </div>
+  </div>
+</section>
+<!-- /.content -->
+{% else %}
+  {% include 'common/_invalid_permission.html' %}
+{% endif %}
+
+{% endblock body %}
