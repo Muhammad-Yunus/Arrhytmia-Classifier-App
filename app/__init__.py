@@ -18,6 +18,7 @@ db = SQLAlchemy()
 db.init_app(app)
 db.app = app
 
+
 from app.views.home import MyHomeView
 
 from app.models.users import User 
