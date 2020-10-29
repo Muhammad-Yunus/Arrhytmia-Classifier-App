@@ -8,7 +8,9 @@ if __name__ == '__main__':
     app_dir = os.path.realpath(os.path.dirname(__file__))
 
     database_path = os.path.join(app_dir, "app", app.config['DATABASE_FILE'])
+
     if not os.path.exists(database_path):
+        print("_________ BUILD DB & SAMPLE __________")
         build_sample_db()
     
     # Start app

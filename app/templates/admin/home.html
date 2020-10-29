@@ -23,11 +23,11 @@
       <!-- small box -->
       <div class="small-box bg-aqua">
         <div class="inner">
-          <h3>150</h3>
-          <p>New Orders</p>
+          <h3>57</h3>
+          <p>ECG Sample</p>
         </div>
         <div class="icon">
-            <i class="ion ion-bag"></i>
+            <i class="ion ion-ios-pulse-strong"></i>
         </div>
         <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
       </div>
@@ -37,8 +37,8 @@
       <!-- small box -->
       <div class="small-box bg-green">
         <div class="inner">
-          <h3>53<sup style="font-size: 20px">%</sup></h3>
-          <p>Bounce Rate</p>
+          <h3>87<sup style="font-size: 20px">%</sup></h3>
+          <p>Average Prediction Result</p>
         </div>
         <div class="icon">
             <i class="ion ion-stats-bars"></i>
@@ -51,11 +51,11 @@
       <!-- small box -->
       <div class="small-box bg-yellow">
         <div class="inner">
-          <h3>44</h3>
-          <p>User Registrations</p>
+          <h3>6<small style="color: white;font-size: medium;"> Class</small></h3>
+          <p>Feature Data</p>
         </div>
         <div class="icon">
-            <i class="ion ion-person-add"></i>
+            <i class="ion ion-android-options"></i>
         </div>
         <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
       </div>
@@ -65,11 +65,11 @@
       <!-- small box -->
       <div class="small-box bg-red">
         <div class="inner">
-          <h3>65</h3>
-          <p>Unique Visitors</p>
+          <h3>2</h3>
+          <p>Trained Model</p>
         </div>
         <div class="icon">
-            <i class="ion ion-pie-graph"></i>
+            <i class="ion ion-cube"></i>
         </div>
         <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
       </div>
@@ -77,6 +77,40 @@
     <!-- ./col -->
   </div>
   <!-- /.row -->
+
+  <!-- Chart PPG -->
+  <div class="row">
+    <div class="col-md-7">
+      <div class="box box-success no-margin">
+        <div class="box-header with-border">
+          <h3 class="box-title">ECG Viewer <small id="connected_label" class=""></small></h3>
+          <div class="box-tools pull-right">
+          
+          </div>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body no-margin" style="padding: 5px 20px 0 20px;">
+          <div class="y_box">
+            <p class="y_label">Amplitude</p>
+          </div>
+          <center class="bg-white">
+            <canvas id="ecg" width="600"  height="210" class="ecg-canvas">
+                HTML5 Canvas not supported
+            </canvas>
+            <br><p class="no-margin">Time (s)</p>
+          </center>
+        </div>
+        <!-- /.box-body -->
+        <div class="box-footer">
+          <center >
+            <button id="startecg"><i class="fa fa-play"></i></button>
+            <button id="stopecg"><i class="fa fa-stop"></i></button>
+          </center>
+        </div>
+        <!-- /.box-footer -->
+      </div>
+    </div>
+  </div>
 </section>
 <!-- /.content -->
 
@@ -88,5 +122,100 @@
 
 
 {% block js_custom %}
+<script>
 
+  // --------------------------------------------------------------
+  // 
+  // ----------------------- PPG Plotter --------------------------
+
+  var ECG_data = [];
+
+  function getECG(){
+
+    var output = new Array();
+    if (ECG_data.length > 0){
+      output[0] = ECG_data[0];
+      ECG_data.splice(0, 1);
+      if (output[0] > 0.5) beep_sound = new beep(1);
+    }
+    else {
+      output[0] = 0
+    }
+    return output;
+  }
+
+  var ecg;
+  $(document).ready(function(){
+      ecg = new PlethGraph("ecg", getECG);
+      ecg.speed = 1.5;
+      ecg.scaleFactor = 1.3;
+      ecg.grid()
+
+      $("#startecg").click(function(event){
+        if (ecg.isActive()){
+          ecg.pause();
+          $('#startecg').html('<i class="fa fa-play"></i>');
+          socket.emit('start_event', {data: 'stop'});
+          console.log("[INFO] stop ecg data stream!");
+        }
+        else {
+          ecg.start();
+          $('#startecg').html('<i class="fa fa-pause"></i>');
+          socket.emit('start_event', {data: 'start'});
+          console.log("[INFO] request ecg data stream!");
+        }    
+
+      });
+
+      $("#stopecg").click(function(){
+        ecg.stop();
+        ECG_data = [];
+        socket.emit('start_event', {data: 'stop'});
+        console.log("[INFO] stop ecg data stream!");
+        $('#stopecg').html('<i class="fa fa-stop"></i>');
+        $('#startecg').html('<i class="fa fa-play"></i>');
+      });
+  });
+
+  // --------------------------------------------------------------
+  // 
+  // ----------------------- Socket.IO ---------------------------- 
+
+  namespace = '/arrhytmia';
+  var socket = io(namespace);
+  var prev_is_dc = false;
+  socket.on('connect', function() {
+      beep_sound = new beep(1);
+      socket.emit('ecg_event', {data: 'connected'});
+      $("#connected_label").html("(connected)");
+      $("#connected_label").addClass("text-green").removeClass("text-red");
+      console.log("[INFO] Connected to socket server!");
+
+      if (prev_is_dc && $('#startecg').find(".fa-pause").length > 0){
+          socket.emit('start_event', {data: 'start'});
+          console.log("[INFO] request ecg data stream after disconect!");
+      }
+  });
+
+  socket.on('ecg_receive', function(msg, cb) {
+      
+      for(var i =0; i < msg.data.length; i++){
+        ECG_data.push(msg.data[i]);
+      }
+      console.log("[INFO] (", msg.async,") Receive data stream : " + msg.data.length + "/" +  ECG_data.length);
+      // if (cb) cb();
+  });
+  socket.on('disconnect', function(){
+    beep_sound = new beep(1);
+    $("#connected_label").html("(disconnected)");
+    $("#connected_label").removeClass("text-green").addClass("text-red");
+    console.log("[INFO] Browser disconected from server...");
+    ECG_data = [];
+    prev_is_dc = true;
+  });
+
+  socket.on('ecg_info', function(msg) {
+    console.log("[INFO] Callback info :", msg);
+  });
+</script>
 {% endblock js_custom %}

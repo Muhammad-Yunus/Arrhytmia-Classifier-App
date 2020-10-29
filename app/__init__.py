@@ -1,3 +1,6 @@
+import eventlet
+eventlet.monkey_patch()
+
 import os 
 from datetime import datetime
 
@@ -18,15 +21,15 @@ db = SQLAlchemy()
 db.init_app(app)
 db.app = app
 
-
 from app.views.home import MyHomeView
 
-from app.models.users import User 
 from app.models.roles import Role
+from app.models.users import User 
 
-from app.controllers.users import UsersRoute
 from app.controllers.roles import RolesRoute
+from app.controllers.users import UsersRoute
 from app.controllers.users import Profile
+from app.controllers.ecgs import EcgRoute
 
 # Setup Flask-Security
 user_datastore = SQLAlchemyUserDatastore(db, User, Role)
@@ -43,10 +46,13 @@ admin = Admin(
     }
 )
 
+
 # Add model views
 admin.add_view(RolesRoute(name="Roles", menu_icon_type='fa', menu_icon_value='fa-server', endpoint="roles"))
 admin.add_view(UsersRoute(name="Users", menu_icon_type='fa', menu_icon_value='fa-users', endpoint='users'))
 admin.add_view(Profile(name="Profile", endpoint='profile'))
+admin.add_view(EcgRoute(name="ECG Data", menu_icon_type='fa', menu_icon_value='fa-database', endpoint='ecgs'))
+
 
 # define a context processor for merging flask-admin's template context into the
 # flask-security views.

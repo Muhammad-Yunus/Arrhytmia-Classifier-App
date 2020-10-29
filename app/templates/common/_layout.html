@@ -183,7 +183,13 @@
  
   <!-- AdminLTE App -->
   <script src="{{url_for('static',filename='js/app.min.js')}}"></script>
+  <!-- PPG Grapher -->
+  <script src="{{url_for('static',filename='plugins/ppg_grapher/ppg_grapher_main.js')}}"></script>
+  <!-- Socket-IO -->
+  <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
 
+  <!-- Beep Sound -->
+  <script src="{{url_for('static',filename='plugins/beep/beep.js')}}"></script>
   <!-- Custom Js -->
   <!-- hide alert message -->
   <script src="{{ url_for('static', filename='js/rich_widget/_hide_flash.js') }}", type="text/javascript"></script>

@@ -3,3 +3,12 @@ Flask-Admin
 Flask-SQLAlchemy
 Flask-Security>=1.7.5
 enum34==1.1.6
+flask-socketio
+flask_sqlalchemy
+flask_wtf
+wtforms
+
+greenlet
+eventlet
+gevent
+gevent-websocket

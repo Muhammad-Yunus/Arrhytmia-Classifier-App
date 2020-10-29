@@ -11,4 +11,6 @@ import csv
 
 from app.views.__base_view___ import BaseViewSU
 
+from werkzeug.utils import secure_filename
+
 

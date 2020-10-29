@@ -6,5 +6,6 @@ from app import datetime
 from app import current_user
 
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField, SelectField, SelectMultipleField
-from wtforms.validators import DataRequired, Length, Email, EqualTo
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, \
+                    TextAreaField, SelectField, SelectMultipleField, FileField
+from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
