@@ -204,5 +204,5 @@ def test_connect(message):
 
 if __name__ == '__main__':
     #build_sample_db()
-    socketio.run(app, host="0.0.0.0", debug=True)
+    socketio.run(app, host="0.0.0.0", debug=False)
     #app.run(host="0.0.0.0", debug=False)
