@@ -114,3 +114,7 @@ a.disabled {
     pointer-events: none;
     cursor: default;
   }
+
+.control-label {
+    padding-top: 5px;
+}

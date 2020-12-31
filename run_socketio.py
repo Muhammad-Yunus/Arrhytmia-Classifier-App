@@ -14,9 +14,12 @@ class Predictor(object):
         self.sequences = []
         self.switch = False
         self.socketio = socketio
+        self.idx_seq = 0
+        self.len_seq = 0
 
     def store_data(self, Sequences):
         self.sequences = Sequences
+        self.len_seq = len(Sequences)
 
     def predict(self):
         url = "http://127.0.0.1:5001/ecg_predict_sequence"
@@ -37,11 +40,15 @@ class Predictor(object):
                             {'data': seq.tolist(), 
                             'async' : self.socketio.async_mode,
                             'confidence': confidence,
+                            'index' : self.idx_seq,
+                            'length' : self.len_seq,
                             'label' : label},
                             namespace='/arrhytmia')
             self.socketio.sleep(1)
+            self.idx_seq += 1
 
     def stop(self):
+        self.idx_seq = 0
         self.switch = False
         self.sequences = []
         print("[INFO] predictor stopped!")
@@ -169,7 +176,7 @@ def test_connect(message):
                 print("data unsplit size :", ecg_data_unsplit.shape , ecg_data_unsplit.dtype)
                 print("\n\n")
 
-                for single_ecg in ecg_data_unsplit :
+                for i, single_ecg in enumerate(ecg_data_unsplit) :
                     single_ecg = single_ecg[:,0]
                     ids = np.where(single_ecg != 0.0)[0]
                     single_ecg = single_ecg[:ids[-1] + 1]

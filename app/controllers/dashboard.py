@@ -19,7 +19,7 @@ class DashboardRoute(BaseViewSU):
 
         ECG_sample_count = len(available_sequences)
         Model_count = DL_Model().query.count()
-        Feature_count = 300
+        Feature_count = 150
         Avg_prediction = db.session.query(func.avg(Prediction.confidence)).first()[0]
         return self.render('admin/dashboard.html',
                             available_sequences = available_sequences,
