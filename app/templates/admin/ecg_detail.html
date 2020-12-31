@@ -7,7 +7,7 @@
 <!-- Content Header (Page header) -->
 <section class="content-header">
   <h1>
-    {{ form.name.data }}
+    {{ 'Add a New ECG Data' if form.name.data is none else form.name.data }}
   </h1>
   <ol class="breadcrumb">
     <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
@@ -25,6 +25,21 @@
         
         {% if type == 'content' and item.name in formCtrl.inputField %}
           {{ f_form_field(item) }}
+
+          <!-- custom field download & label uploaded file -->
+          {% if item.type == 'FileField' and formCtrl._id %}
+            <div class="form-group">
+              <div class="col-sm-4 form-control-label"><b>Uploaded File</b></div>
+              <div class="col-sm-8">
+                <div class="">
+                  {{ formCtrl.download_name }} 
+                  <a href="{{ url_for(formCtrl.download_act, filename=formCtrl.download_name)}}" class="btn btn-primary btn-xs">
+                    <i class="fa fa-download"></i> Download
+                  </a>
+                </div>
+              </div>
+            </div>
+          {% endif %}
 
         {% elif type == 'footer' and item.name in formCtrl.submitField %}
           {{ f_form_button(item) }}

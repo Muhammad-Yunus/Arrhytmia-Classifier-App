@@ -32,3 +32,8 @@ def getRowCSV(Table, record, col_exclude):
             else :
                 rowCSV.append(getattr(record, str(item.name)))
     return rowCSV
+  
+def getFullPath(filename, folder = 'static/model-upload'):
+    root_path = os.path.dirname(os.path.dirname(__file__))
+    full_path = os.path.join(root_path, folder, filename)
+    return full_path

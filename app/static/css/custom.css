@@ -89,3 +89,32 @@ button.b-none:active {
     position: absolute;
     left: -10px;
 }
+
+.progress {
+    margin-bottom: 3px;
+}
+
+.mr_10 {
+    margin-right: 10px !important;
+}
+.ml_10 {
+    margin-left: 10px !important;
+}
+.mr_5 {
+    margin-right: 5px !important;
+}
+.ml_5 {
+    margin-left: 5px !important;
+}
+.mt_5 {
+    margin-top: 5px !important;
+}
+
+a.disabled {
+    pointer-events: none;
+    cursor: default;
+  }
+
+.control-label {
+    padding-top: 5px;
+}

@@ -24,14 +24,23 @@
           <!-- Create Table Content -->
           <td>{{ loop.index + tableRecords.per_page*(tableRecords.page - 1) }}</td>
           <td>{{ record['name'] }}</td>
+          <td>{{ record['fs'] }}Hz</td>
           <td>{{ record['file_name'] }}</td>
-          <td><i class= "fa {{ 'fa-check-circle-o' if record['is_proceed'] else 'fa-close'}}" ></i></td>
-          <td>{{ record['upload_at'] }}</td>
+          <td><i class= "fa {{ 'fa-check text-green' if record['is_procced'] else 'fa-close'}}" ></i></td>
           <td>{{ record['upload_at'].strftime("%m/%d/%Y %H:%M:%S") }}</td>
+          <td>{{ record['upload_by'] }}</td>
           <td>
-            <a href="{{ url_for(headerCtrl.detail_act, _id = record['id']) }}" class="btn btn-xs btn-primary">
+            <a href="{{ url_for(headerCtrl.procced_act, _id = record['id']) }}" class="btn btn-xs btn-success {{ 'disabled' if record['is_procced'] else '' }}">
+              <i class="fa fa-play"></i>
+            </a>
+            <a href="{{ url_for(headerCtrl.detail_act, _id = record['id']) }}" class="btn btn-xs btn-primary ml_5">
               <i class="fa fa-edit"></i>
             </a>
+            {% if 'delete_act' in headerCtrl %}
+              <a href="{{ url_for(headerCtrl.delete_act, _id = record['id']) }}" class="btn btn-xs btn-danger ml_5">
+                <i class="fa fa-trash"></i>
+              </a>
+            {% endif %}
           </td>
         {% endcall %}
       </div>

@@ -41,14 +41,14 @@ def getTableRecords(Table, search_key, filters, sort_type, _col, page, per_page)
 
 def initTableRecords(per_page=10):
     page = request.args.get('page')
-    page = 1 if page == None else page
+    page = int(1 if page == None else page)
 
     table_search = ""
     search_key = "%%"
 
     _col = 'id'
-    _type = 'asc'
-    sort_type = asc
+    _type = 'desc'
+    sort_type = desc
 
     if request.method == "POST" :
         if 'table_search' in request.form : 

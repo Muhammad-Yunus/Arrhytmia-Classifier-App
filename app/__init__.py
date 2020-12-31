@@ -26,10 +26,13 @@ from app.views.home import MyHomeView
 from app.models.roles import Role
 from app.models.users import User 
 
+from app.controllers.dashboard import DashboardRoute
 from app.controllers.roles import RolesRoute
 from app.controllers.users import UsersRoute
 from app.controllers.users import Profile
 from app.controllers.ecgs import EcgRoute
+from app.controllers.dl_models import DLModelRoute
+from app.controllers.predictions import PredictionRoute
 
 # Setup Flask-Security
 user_datastore = SQLAlchemyUserDatastore(db, User, Role)
@@ -40,19 +43,18 @@ admin = Admin(
     'Arrhytmia',
     base_template='common/_layout.html',
     template_mode='bootstrap3',
-    index_view=MyHomeView(),
-    category_icon_classes={
-        'Home': 'glyphicon glyphicon-home',
-    }
+    index_view=MyHomeView()
 )
 
 
 # Add model views
+admin.add_view(DashboardRoute(name="Dashboard", menu_icon_type='fa', menu_icon_value='fa-th-large', endpoint='dashboard'))
+admin.add_view(EcgRoute(name="ECG Data", menu_icon_type='fa', menu_icon_value='fa-database', endpoint='ecgs'))
+admin.add_view(DLModelRoute(name="DL Model", menu_icon_type='fa', menu_icon_value='fa-cubes', endpoint='models'))
+admin.add_view(PredictionRoute(name="Predictions", menu_icon_type='fa', menu_icon_value='fa-bar-chart', endpoint='predictions'))
 admin.add_view(RolesRoute(name="Roles", menu_icon_type='fa', menu_icon_value='fa-server', endpoint="roles"))
 admin.add_view(UsersRoute(name="Users", menu_icon_type='fa', menu_icon_value='fa-users', endpoint='users'))
 admin.add_view(Profile(name="Profile", endpoint='profile'))
-admin.add_view(EcgRoute(name="ECG Data", menu_icon_type='fa', menu_icon_value='fa-database', endpoint='ecgs'))
-
 
 # define a context processor for merging flask-admin's template context into the
 # flask-security views.
@@ -97,5 +99,6 @@ def build_sample_db():
 @app.route('/')
 def index():
     return render_template('index.html')
+
 
 
