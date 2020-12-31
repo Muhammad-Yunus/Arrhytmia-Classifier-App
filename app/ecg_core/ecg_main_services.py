@@ -17,11 +17,11 @@ from . import resample_poly
 import time
 
 def preprocessing_unsplited(filename, path, fs):
-    ECG = read_from_csv(filename, path, fs)
+    ECG = read_from_csv(filename, path, fs, is_splited=False)
     ECG_ALS = remove_baseline_als(ECG)
     ECG_Norm = min_max_normalization(ECG_ALS)
     ECG_Norm = [np.array(item)[:,0] for item in ECG_Norm]
-    if fs == 250:
+    if fs == 125:
         ECG_Norm = [resample_poly(item, 1, 5) for item in ECG_Norm] #downsampling from 250Hz to 50Hz
     return ECG_Norm
 
@@ -30,12 +30,11 @@ def preprocessing(filename, path, fs):
     ECG_ALS = remove_baseline_als(ECG)
     ECG_Norm = min_max_normalization(ECG_ALS)
     ECG_split = rr_detector(ECG_Norm, fs)
-    ECG_Split_250 = upsampling_signals(ECG_split, fs)
-    #ECG_Scaler = scaler(ECG_Split_250)
-    return ECG_Split_250
+    ECG_Split_125 = upsampling_signals(ECG_split, fs)
+    return ECG_Split_125
 
-def save_splited_ecg(ECG_Split_250, filename, path):
-    ECG_SPLIT_DF = pd.DataFrame(ECG_Split_250)
+def save_splited_ecg(ECG_Split_125, filename, path):
+    ECG_SPLIT_DF = pd.DataFrame(ECG_Split_125)
     ECG_SPLIT_DF = ECG_SPLIT_DF.fillna(0)
     ECG_SPLIT_DF.to_csv(os.path.join(path, filename), index=0, header=False)
 
@@ -45,7 +44,7 @@ def read_splited_ecg(filename, path):
 
 def split_sequence(filename, path="static\csv-upload",fs=25):
     print("[INFO] Start Preprocessing")
-    ECG_Split_250 = preprocessing(filename, path=path, fs=fs)
+    ECG_Split_125 = preprocessing(filename, path=path, fs=fs)
     ECG_Unsplit = preprocessing_unsplited(filename, path=path, fs=fs)
 
     curr_fs = fs
@@ -53,7 +52,7 @@ def split_sequence(filename, path="static\csv-upload",fs=25):
     saved_filename_ecg_split = "%s_%sHz_%s" % (index, curr_fs, filename)
     saved_filename_ecg_unsplit = "unsplit_%s_%sHz_%s" % (index, curr_fs, filename)
     target_path = "app\static\csv-ecg-split"
-    save_splited_ecg(ECG_Split_250, saved_filename_ecg_split, path=target_path)
+    save_splited_ecg(ECG_Split_125, saved_filename_ecg_split, path=target_path)
     save_splited_ecg(ECG_Unsplit, saved_filename_ecg_unsplit, path=target_path)
     
     print("[INFO] Sequence Generated!")
@@ -61,7 +60,7 @@ def split_sequence(filename, path="static\csv-upload",fs=25):
 
 def load_sequence(filename, path="static\csv-ecg-split"):
     ECG_DF = read_splited_ecg(filename, path=path)
-    ECG_sequence = ECG_DF.iloc[:,:300].values
+    ECG_sequence = ECG_DF.iloc[:,:150].values
     ECG_sequence = ECG_sequence.reshape(len(ECG_sequence), ECG_sequence.shape[1],1)
 
     ECG_DF_UNSPLIT = read_splited_ecg("unsplit_" + filename, path=path)

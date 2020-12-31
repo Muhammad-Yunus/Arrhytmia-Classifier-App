@@ -243,7 +243,7 @@
 
         var fs_sequence = JSON.parse('{{ fs_sequence|tojson|safe }}');
         var f = parseInt(fs_sequence[source]);
-        f = ((f == 250) ? 50 : f); // set signal with f=250Hz to 50Hz 
+        f = ((f == 125) ? 50 : f); // set signal with f=125Hz to 25Hz 
         var T = 1000.0/f; // convert to periode
         var R = 6000/ecg.width; // ratio ms/px
         var dx = Math.round(T/R); // convert to delta of step
