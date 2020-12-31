@@ -42,6 +42,7 @@ def userDetail(self, _id, screen_act):
         submitField = submitField,
         indexField=indexField,
         form_act = screen_act,
+        form_name = 'User Form',
         cancel_act = "users.index",
     )
     return self.render("admin/user_detail.html",
@@ -79,7 +80,7 @@ class UsersRoute(BaseViewSU):
             export_act = 'users.download',
             export_filename = 'Export - User.csv',
             sort_act = 'users.index',
-            detail_act = 'users.detail',
+            detail_act = 'users.detail', 
             is_add_new = False
         )
 

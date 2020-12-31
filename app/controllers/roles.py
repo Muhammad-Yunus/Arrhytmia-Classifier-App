@@ -94,6 +94,7 @@ class RolesRoute(BaseViewSU):
             indexField=indexField,
             form_act = "roles.detail",
             cancel_act = "roles.index",
+            form_name = 'Role Form', 
         )
         return self.render("admin/role_detail.html",
                             form=form,

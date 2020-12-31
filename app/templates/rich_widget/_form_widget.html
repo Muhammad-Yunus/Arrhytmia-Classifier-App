@@ -5,7 +5,7 @@
             method="post"
             {{ 'enctype=multipart/form-data' if formCtrl.is_multipart else '' }}>
     <div class="box-header with-border">
-        <h3 class="box-title">User Form</h3>
+        <h3 class="box-title"> {{ formCtrl.form_name }}</h3>
     </div>
     <!-- /.box-header -->
     <div class="box-body">
@@ -20,6 +20,9 @@
         {% for item in form %}
             {{ caller('footer', item) }}
         {% endfor %}
+        {% if 'delete_act' in formCtrl and formCtrl._id %}
+            <a href="{{ url_for(formCtrl.delete_act, _id = formCtrl._id) }}" class="btn btn-danger pull-right mr_5">Delete</a>
+        {% endif %}
     </div>
     <!-- /.box-footer -->
     </form>

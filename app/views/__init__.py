@@ -7,5 +7,5 @@ from app import current_user
 
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, \
-                    TextAreaField, SelectField, SelectMultipleField, FileField
+                    TextAreaField, SelectField, SelectMultipleField, FileField, FloatField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError

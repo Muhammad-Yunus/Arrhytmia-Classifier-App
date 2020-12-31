@@ -31,8 +31,9 @@
     g.speed           =   2;
     g.linewidth       =   1;
     g.scaleFactor     =   1;
-    g.pause_graph      =   true;
-    
+    g.pause_graph     =   true;
+    g.delay           =   8.33;
+
     g.plethStarted    =   false;
     g.plethBuffer     =   new Array();
     g.cleanBuffer     =   false
@@ -43,7 +44,7 @@
     //padding around grid
     g.p               =   0;
     // grid step
-    g.step            =   30;
+    g.step            =   24;
     // grid time start on grid item
     g.timeStartFactor =   2;
     // grid time show space
@@ -54,6 +55,11 @@
     g.context.font    =   "14px";
 
     g.lastTime        =   new Date();
+
+    // animation parameter
+    g.curr_time       =  Date.now();
+    g.last_time       =  Date.now();
+    g.elapsed_time    =  0;
 
     devicePixelRatio = window.devicePixelRatio || 1,
     backingStoreRatio = g.context.webkitBackingStorePixelRatio ||
@@ -109,6 +115,8 @@
     g.start = function() {
       g.cleanBuffer = false
       g.pause_graph = false;
+
+      g.start_time = Date.now();
       g.animate();
     };
 
@@ -131,17 +139,24 @@
                        window.msRequestAnimationFrame     ||
                        window.oRequestAnimationFrame;
       
+      g.curr_time = Date.now();
+      g.elapsed_time = g.curr_time - g.last_time;
+
       // Recursive call to do animation frames
       if (!g.pause_graph) reqAnimFrame(g.animate);
-      
-      // We need to fill in data into the buffer so we know what to draw
-      g.fillData();
 
-      // Draw the frame (with the supplied data buffer)
-      g.draw();
+      // update time & draw
+      if (g.elapsed_time > g.delay) {
+        g.last_time = g.curr_time - (g.elapsed_time % g.delay);
 
+        // We need to fill in data into the buffer so we know what to draw
+        g.fillData();
+
+        // Draw the frame (with the supplied data buffer)
+        g.draw();
+      }
     };
-    
+
     g.clear = function(){
       g.context.clearRect(0, 0, g.width, g.height);
       g.current_x       =   0;
@@ -186,11 +201,22 @@
           g.checkTime(Math.round(g.lastTime.getSeconds() + k + 0.25*g.timeStartFactor))]);
       }
       return timeArr
-      };
+    };
+
+    g.getTimeArange = function(){
+      var timeArr = new Array();
+      var dpx = g.step*g.timeStartFactor; //px, delta between x label
+      var m = Math.round(g.width / dpx); // number of x label position
+      var dt = Math.round(1200.0 / m); // ms, delta time
+      for (var i = 1; i < m; i++){
+        timeArr.push(i*dt);
+      }
+      return timeArr
+    }
 
     g.draw = function() {
       // create grid 
-      g.grid()
+      g.grid();
       // Circle back the draw point back to zero when needed (ring drawing)
       g.current_x = (g.current_x > g.width) ? 0 : g.current_x;
 
@@ -257,8 +283,59 @@
         // Create stroke
         g.context.stroke();
       }
-
       // Stop the drawing
       g.context.closePath();
+    };
+
+    // ------------------------------- draw single sample ------------------------
+    g.draw_sample = function() {
+      // Create grid
+      g.grid();
+      // Circle back the draw point back to zero when needed (ring drawing)
+      g.current_x = (g.current_x > g.width) ? 0 : g.current_x;
+      
+      // Print Time Label (X) 
+      g.context.fillStyle="#fff";
+      g.context.fillRect(0, g.height*0.92, g.width, g.height*0.99);
+      
+      // update start and end time
+      g.timeBuffer = g.getTimeArange();
+
+      var y = 0;      
+      for (var x = g.step*g.timeStartFactor; x < g.bw; x += g.step*g.timeStepFactor) {
+        g.context.fillStyle="#000";
+        g.context.fillText(g.timeBuffer[y], x - 8, g.height*0.97);
+        y += 1;
+      }
+
+      // If this is first time, draw the first y point depending on the buffer
+      if (!g.started) {
+        g.current_y = convertToGraphCoord(g, g.plethBuffer[0]);
+        g.started = true;
+      }
+      g.speed = Math.round(g.bw / g.plethBuffer.length) + 0.5;
+
+      for (i = 0; i < g.plethBuffer.length; i++) {
+        // Start the drawing
+        g.context.beginPath();
+        g.context.strokeStyle = "black";
+
+        // We first move to the current x and y position (last point)
+        g.context.moveTo(g.current_x, g.current_y);
+
+        // Put the new y point in from the buffer
+        g.current_y = convertToGraphCoord(g, g.plethBuffer[i]);
+        
+        // Draw the line to the new x and y point
+        g.context.lineTo(g.current_x += g.speed, g.current_y);
+        // Set the 
+        g.context.lineWidth   = g.linewidth;
+        g.context.lineJoin    = "round";
+        
+        // Create stroke
+        g.context.stroke();
+        // Stop the drawing
+        g.context.closePath();
+      }
     };
   }

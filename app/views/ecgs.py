@@ -9,6 +9,7 @@ from app.models.ecgs import Ecg
 class EcgsForm(FlaskForm):
     name = StringField('Name',
                            validators=[DataRequired(), Length(min=2, max=20)])
+    fs = StringField('Sampling Rate (Hz)')
     file_ecg = FileField('Data ECG (CSV)',
                            validators=[DataRequired()])
     submit = SubmitField('Upload')

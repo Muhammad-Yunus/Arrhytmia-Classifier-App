@@ -1,4 +1,4 @@
-from . import AdminIndexView, expose
+from . import AdminIndexView, expose, redirect, url_for
 
 # Home views
 class MyHomeView(AdminIndexView):
@@ -9,4 +9,5 @@ class MyHomeView(AdminIndexView):
 
     @expose('/')
     def index(self):
-        return self.render('admin/home.html')
+        
+        return redirect(url_for('dashboard.index')) 
