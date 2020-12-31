@@ -51,7 +51,7 @@ def split_sequence(filename, path="static\csv-upload",fs=25):
     index = time.strftime("%Y%m%d_%H%M%S", time.localtime(time.time()))
     saved_filename_ecg_split = "%s_%sHz_%s" % (index, curr_fs, filename)
     saved_filename_ecg_unsplit = "unsplit_%s_%sHz_%s" % (index, curr_fs, filename)
-    target_path = "app\static\csv-ecg-split"
+    target_path = "app/static/csv-ecg-split"
     save_splited_ecg(ECG_Split_125, saved_filename_ecg_split, path=target_path)
     save_splited_ecg(ECG_Unsplit, saved_filename_ecg_unsplit, path=target_path)
     

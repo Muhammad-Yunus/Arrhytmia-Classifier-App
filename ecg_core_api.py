@@ -1,3 +1,6 @@
+import eventlet
+eventlet.monkey_patch()
+
 import os
 import json
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
@@ -19,7 +22,7 @@ def load_model_wrapper():
     print("[INFO] model name : %s" % model_name)
     if model_name :
         global model 
-        model = load_model(model_name, path="app\static\model-upload")
+        model = load_model(model_name, path="app/static/model-upload")
 
 @app.route('/', methods=['GET'])
 def home():
@@ -31,7 +34,7 @@ def ecg_split_sequence():
     fs = request.args.get('fs')
     print("[INFO] filename %s (%s)" % (filename, fs))
     if filename :
-        result = split_sequence(filename, path="app\static\csv-upload", fs= int(fs) if fs is not None else 25)
+        result = split_sequence(filename, path="app/static/csv-upload", fs= int(fs) if fs is not None else 25)
         return dict(status = result[0], 
                     filename = result[1])
     else :
@@ -43,7 +46,7 @@ def ecg_load_sequence():
     filename = request.args.get('filename')
     
     print("[INFO] filename %s" % filename)
-    result, result_unsplit = load_sequence(filename, path="app\static\csv-ecg-split")
+    result, result_unsplit = load_sequence(filename, path="app/static/csv-ecg-split")
     dtype = result.dtype
     print("[INFO] ndarray dtype %s" % dtype)
 
